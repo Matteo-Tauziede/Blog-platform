@@ -1,0 +1,69 @@
+<% const title = post.title %>
+<%- include('partials/header', { title, currentUser }) %>
+
+<article class="post-full">
+  <div class="post-card-top">
+    <h1><%= post.title %></h1>
+    <% if (!post.isPublic) { %><span class="badge badge-private">Private</span><% } %>
+  </div>
+  <p class="post-meta">
+    by <strong><%= post.authorName %></strong> · <%= new Date(post.createdAt).toLocaleString() %>
+    <% if (post.updatedAt !== post.createdAt) { %> · edited <%= new Date(post.updatedAt).toLocaleString() %><% } %>
+  </p>
+
+  <% if (post.tags && post.tags.length) { %>
+    <div class="post-tags">
+      <% post.tags.forEach(function(tag) { %>
+        <a href="/?tag=<%= encodeURIComponent(tag) %>" class="tag-pill">#<%= tag %></a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <div class="markdown-body">
+    <%- renderedHtml %>
+  </div>
+
+  <% if (isOwner) { %>
+    <div class="post-owner-actions">
+      <a href="/posts/<%= post.id %>/edit" class="btn btn-secondary">Edit</a>
+      <form action="/posts/<%= post.id %>?_method=DELETE" method="POST" data-confirm="Delete this post? This cannot be undone." class="inline-form">
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+    </div>
+  <% } %>
+</article>
+
+<section class="comments-section">
+  <h2>Comments (<%= comments.length %>)</h2>
+
+  <% if (currentUser) { %>
+    <form action="/posts/<%= post.id %>/comments" method="POST" class="comment-form">
+      <textarea name="content" rows="3" required placeholder="Add a comment..."></textarea>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+      </div>
+    </form>
+  <% } else { %>
+    <p class="hint"><a href="/login">Log in</a> to leave a comment.</p>
+  <% } %>
+
+  <% if (!comments.length) { %>
+    <p class="empty-state">No comments yet.</p>
+  <% } else { %>
+    <ul class="comment-list">
+      <% comments.forEach(function(comment) { %>
+        <li class="comment">
+          <p class="comment-meta"><strong><%= comment.authorName %></strong> · <%= new Date(comment.createdAt).toLocaleString() %></p>
+          <p class="comment-content"><%= comment.content %></p>
+          <% if (currentUser && (currentUser.id === comment.authorId || currentUser.id === post.authorId)) { %>
+            <form action="/posts/<%= post.id %>/comments/<%= comment.id %>?_method=DELETE" method="POST" data-confirm="Delete this comment?" class="inline-form">
+              <button type="submit" class="link-button link-button-danger">Delete</button>
+            </form>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

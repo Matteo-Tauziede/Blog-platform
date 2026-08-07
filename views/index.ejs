@@ -1,0 +1,44 @@
+<% const title = 'Home' %>
+<%- include('partials/header', { title, currentUser }) %>
+
+<section class="page-heading">
+  <h1>Latest Posts</h1>
+  <% if (currentUser) { %>
+    <a href="/posts/new" class="btn btn-primary">+ New Post</a>
+  <% } %>
+</section>
+
+<% if (allTags && allTags.length) { %>
+  <div class="tag-cloud">
+    <a href="/" class="tag <%= !activeTag ? 'tag-active' : '' %>">All</a>
+    <% allTags.forEach(function(tag) { %>
+      <a href="/?tag=<%= encodeURIComponent(tag) %>" class="tag <%= activeTag === tag ? 'tag-active' : '' %>">#<%= tag %></a>
+    <% }) %>
+  </div>
+<% } %>
+
+<% if (!posts.length) { %>
+  <p class="empty-state">No posts yet<% if (activeTag) { %> tagged <strong>#<%= activeTag %></strong><% } %>. <% if (currentUser) { %><a href="/posts/new">Write the first one!</a><% } %></p>
+<% } else { %>
+  <div class="post-list">
+    <% posts.forEach(function(post) { %>
+      <article class="post-card">
+        <div class="post-card-top">
+          <h2><a href="/posts/<%= post.id %>"><%= post.title %></a></h2>
+          <% if (!post.isPublic) { %><span class="badge badge-private">Private</span><% } %>
+        </div>
+        <p class="post-meta">by <strong><%= post.authorName %></strong> · <%= new Date(post.createdAt).toLocaleDateString() %></p>
+        <p class="post-excerpt"><%= post.content.replace(/[#*`_>\-]/g, '').slice(0, 160) %><%= post.content.length > 160 ? '…' : '' %></p>
+        <% if (post.tags && post.tags.length) { %>
+          <div class="post-tags">
+            <% post.tags.forEach(function(tag) { %>
+              <a href="/?tag=<%= encodeURIComponent(tag) %>" class="tag-pill">#<%= tag %></a>
+            <% }) %>
+          </div>
+        <% } %>
+      </article>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

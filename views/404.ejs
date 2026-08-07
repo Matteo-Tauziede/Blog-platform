@@ -1,0 +1,10 @@
+<% const title = 'Not Found' %>
+<%- include('partials/header', { title, currentUser }) %>
+
+<div class="empty-state" style="text-align:center; padding: 60px 0;">
+  <h1>404</h1>
+  <p>The page you're looking for doesn't exist.</p>
+  <a href="/" class="btn btn-primary">Go Home</a>
+</div>
+
+<%- include('partials/footer') %>
