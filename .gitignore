@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Data (contains real user accounts and password hashes)
+data/db.json
+
+# Environment
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+*.log
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
